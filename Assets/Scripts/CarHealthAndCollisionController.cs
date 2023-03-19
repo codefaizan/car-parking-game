@@ -4,34 +4,23 @@ using UnityEngine.SceneManagement;
 
 public class CarHealthAndCollisionController : MonoBehaviour
 {
-    UIController uiController;
-    private void Start()
-    {
-        
-        uiController = GameObject.Find("UI Controller").GetComponent<UIController>();
-    }
-
-
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Parking"))
-            uiController.StartParking();
+            UIController.instance.StartParking();
     }
 
     private void OnTriggerExit(Collider other)
     {
         if (other.gameObject.CompareTag("Parking"))
         {
-            uiController.ExitParking();
+            UIController.instance.ExitParking();
         }    
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        //uiController.healthBar.fillAmount -= 0.1f;
-        //uiController.healthBar.fillAmount -= gameController.levelConfig.lifes;
-
         // the health of car reduces when it has a collision
-        uiController.GetDamage();
+        GameController.instance.OnDamage();
     }
 }

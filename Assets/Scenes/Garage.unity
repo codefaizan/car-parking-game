@@ -133,6 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 90901}
   - component: {fileID: 90900}
+  - component: {fileID: 90902}
   m_Layer: 0
   m_Name: Game Manager
   m_TagString: CarsSelectionManager
@@ -152,6 +153,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68ba116c3e1243647b064e856c114c2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  splashScreen: {fileID: 1941368262}
+  carsMenuPanel: {fileID: 680196991}
+  mainMenuPanel: {fileID: 893442365}
+  levelsScreen: {fileID: 402868069}
 --- !u!4 &90901
 Transform:
   m_ObjectHideFlags: 0
@@ -167,6 +172,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &90902
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 90899}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46dc1d01a7aa44f4da83df054f1b83c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3967549
 GameObject:
   m_ObjectHideFlags: 0
@@ -3496,6 +3513,7 @@ GameObject:
   - component: {fileID: 1941368263}
   - component: {fileID: 1941368265}
   - component: {fileID: 1941368264}
+  - component: {fileID: 1941368266}
   m_Layer: 5
   m_Name: Splash Screen
   m_TagString: Untagged
@@ -3562,6 +3580,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1941368262}
   m_CullTransparentMesh: 1
+--- !u!114 &1941368266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1941368262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46dc1d01a7aa44f4da83df054f1b83c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2002988587
 GameObject:
   m_ObjectHideFlags: 0

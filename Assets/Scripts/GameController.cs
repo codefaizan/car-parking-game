@@ -2,14 +2,16 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 public class GameController : MonoBehaviour
 {
-    Transform carSpawnPoint;
     public GameObject[] cars;
     public GameObject[] levels;
     public Levels[] avlLevels;
     public Levels curLevel;
     public GameObject player;
+
+    public static GameController instance;
     private void Awake()
     {
+        instance = this;
         foreach(Levels level in avlLevels)
         {
             level.levelObj.SetActive(false);
@@ -18,12 +20,6 @@ public class GameController : MonoBehaviour
         SetCurrentLevel();
         SpawnCar();
         UIController.instance.InitializUI(curLevel);
-        //---------------------------------------------------------------------
-        //levelConfig = new Levels();
-        //float damage = (float) 1/(levels.Length - GameManager.levelID);
-        //levelConfig.SetDamage(damage);
-        //print(damage + " , " + levelConfig.damage);
-        //---------------------------------------------------------------------
     }
     void SetCurrentLevel()
     {
@@ -47,7 +43,7 @@ public class GameController : MonoBehaviour
         }
     }
 
-    public void LoadGarage()
+    public void LoadMainScene()
     {
         SceneManager.LoadScene(0);
     }
@@ -74,26 +70,8 @@ public class Levels
     public string levelName;
     public int carHealth;
     public int reward;
-    public int secondsLeft = 30;
+    public int secondsLeft;   //game timer
     public float carParkTime;   //Time to hold car in parking area
     public GameObject levelObj;
     public Transform carSpawnPoint;
-    public void SetDamage(int damage)
-    {
-        //if(damage > 0.5f)
-        //{
-        //    damage = 0.5f;
-        //}
-        //else if (damage < 0.25f)
-        //{
-        //    damage = 0.25f;
-        //}
-        //this.damage = damage;
-
-        if (damage < 2)
-            damage = 2;
-        else if (damage > 4)
-            damage = 4;
-        this.carHealth = damage;
-    }
 }

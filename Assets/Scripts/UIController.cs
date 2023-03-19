@@ -6,23 +6,23 @@ using UnityEngine.SceneManagement;
 using TMPro;
 public class UIController : MonoBehaviour
 {
-    GameObject splashScreen;
-    GameObject pauseScreen;
-    GameObject levelWonPanel;
-    GameObject levelFailedPanel;
-    //internal Image healthBar;
-    public SpriteRenderer parkingSpot;
-    Image parkLoadingSign;
-    TMP_Text healthCounter;
-    TMP_Text timer;
-    internal bool levelWon;
-    bool levelFailed;
+    public GameObject loadingScreen;
+    public GameObject pauseScreen;
+    public GameObject levelWonPanel;
+    public GameObject levelFailedPanel;
+    private SpriteRenderer parkingSpot;
+    public Image parkLoadingSign;
+    public TMP_Text healthCounter;
+    public TMP_Text timerTextObj;
+    public TMP_Text rewardTextObj;
     bool gameEnded;
     bool isInParking;
     float parkingTime;
     int levelTime;
-    GameController gameController;
-    Levels levelConfig;
+    int carHealth;
+    int reward;
+    //GameController gameController;
+    //Levels levelConfig;
     public static UIController instance;
     private void Awake()
     {
@@ -38,17 +38,10 @@ public class UIController : MonoBehaviour
     private void Start()
     {
         // finding GameObject references
-        splashScreen = GameObject.Find("Splash Screen");
-        pauseScreen = GameObject.Find("Pause Screen");
         parkingSpot = GameObject.Find("Parking Spot").GetComponent<SpriteRenderer>();
-        parkLoadingSign = GameObject.Find("Park Loading").GetComponent<Image>();
-        healthCounter = GameObject.Find("Health Text").GetComponent<TMP_Text>();
-        timer = GameObject.Find("Timer Text").GetComponent<TMP_Text>();
-        //healthBar = GameObject.Find("Healthbar").GetComponent<Image>();
-        levelWonPanel = GameObject.Find("Level Completed Panel");
-        levelFailedPanel = GameObject.Find("Level Failed Panel");
-        gameController = GameObject.Find("Game Controller").GetComponent<GameController>();
-        Invoke("DisableLoadingPanel", 2f);
+        //gameController = GameObject.Find("Game Controller").GetComponent<GameController>();
+        Invoke("DisableLoadingPanel", 0.5f);
+        
 
 
         parkLoadingSign.transform.parent.gameObject.SetActive(false);
@@ -56,24 +49,18 @@ public class UIController : MonoBehaviour
         levelFailedPanel.SetActive(false);
         pauseScreen.SetActive(false);
 
-        levelConfig = new Levels();
-        int lifes = gameController.levels.Length - GameManager.levelID;
-        levelConfig.SetDamage(lifes);
-        healthCounter.text = "Car Health: " + (levelConfig.carHealth);
-        timer.text = "00:" + levelConfig.secondsLeft;
-        
+        healthCounter.text = "Car Health: " + carHealth;
+        timerTextObj.text = "00:" + levelTime;
     }
     public void InitializUI(Levels _curLevel)
     {
         parkingTime = _curLevel.carParkTime;
         levelTime = _curLevel.secondsLeft;
+        carHealth = _curLevel.carHealth;
+        reward = _curLevel.reward;
     }
     // the health of car reduces when it has a collision
-    public void GetDamage()
-    {
-        levelConfig.carHealth -= 1;
-        healthCounter.text = " Car Health: " + levelConfig.carHealth;
-    }
+
     public void UpdateCarDamage(int _damageVal)
     {
         healthCounter.text = " Car Health: " + _damageVal;
@@ -81,7 +68,7 @@ public class UIController : MonoBehaviour
     }
     public void DisableLoadingPanel()
     {
-        splashScreen.SetActive(false);
+        loadingScreen.SetActive(false);
         // start game timer when "splash screen" disappears
         StartCoroutine(Timer());
     }
@@ -106,6 +93,9 @@ public class UIController : MonoBehaviour
         gameEnded = true;
         levelWonPanel.SetActive(_completed);
         levelFailedPanel.SetActive(!_completed);
+
+        if (_completed)
+            rewardTextObj.text = "Reward: $" + reward;
     }
     public void StartParking()
     {
@@ -139,11 +129,19 @@ public class UIController : MonoBehaviour
         while (levelTime > 0 && !gameEnded)
         {
             levelTime -= 1;
-            if (levelTime < 10)
-                timer.text = "00:0" + levelConfig.secondsLeft;
+            if (levelTime >= 10)
+                timerTextObj.text = "00:" + levelTime;
+            else if (levelTime < 10 && levelTime > 0)
+                timerTextObj.text = "00:0" + levelTime;
             else
-                timer.text = "00:" + levelConfig.secondsLeft;
+                OnGameEnd(false);
+
             yield return new WaitForSeconds(1);
         }
+    }
+
+    public void tempmethod()
+    {
+        print("ok");
     }
 }

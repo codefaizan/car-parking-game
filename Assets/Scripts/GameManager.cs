@@ -8,10 +8,10 @@ public class GameManager : MonoBehaviour
     public static int levelID;
     static GameManager instance;
     // UI Panels
-    GameObject splashScreen;
-    GameObject carsMenuPanel;
-    GameObject mainMenuPanel;
-    GameObject levelsScreen;
+    public GameObject splashScreen;
+    public GameObject carsMenuPanel;
+    public GameObject mainMenuPanel;
+    public GameObject levelsScreen;
 
     void Awake()
     {
@@ -23,13 +23,10 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        splashScreen = GameObject.Find("Splash Screen");
-        Invoke("DisableLoadingPanel", 2f);
-        carsMenuPanel = GameObject.Find("Cars Menu");
-        mainMenuPanel = GameObject.Find("Main Menu Panel");
-        levelsScreen = GameObject.Find("Levels Screen");
+        //Invoke("DisableLoadingPanel", 2f);
         carsMenuPanel.SetActive(false);
         levelsScreen.SetActive(false);
+        DisableLoadingPanel();
     }
 
     public void DisableLoadingPanel()
@@ -66,6 +63,7 @@ public class GameManager : MonoBehaviour
         levelID = levelId;
         splashScreen.SetActive(true);
         SceneManager.LoadScene(1);
+        splashScreen.SetActive(true);
     }// this method is assigned to the level buttons. the selected button takes the levelID to GameController and activate that level
 
 }
