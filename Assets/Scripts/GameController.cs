@@ -1,21 +1,23 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
 public class GameController : MonoBehaviour
 {
     Transform carSpawnPoint;
     public GameObject[] cars;
     public GameObject[] levels;
-    public Levels levelConfig;
-
+    public Levels[] avlLevels;
+    public Levels curLevel;
+    public GameObject player;
     private void Awake()
     {
-        foreach(GameObject level in levels)
+        foreach(Levels level in avlLevels)
         {
-            level.SetActive(false);
+            level.levelObj.SetActive(false);
         }
         levels[GameManager.levelID].SetActive(true);
+        SetCurrentLevel();
         SpawnCar();
+        UIController.instance.InitializUI(curLevel);
         //---------------------------------------------------------------------
         //levelConfig = new Levels();
         //float damage = (float) 1/(levels.Length - GameManager.levelID);
@@ -23,18 +25,27 @@ public class GameController : MonoBehaviour
         //print(damage + " , " + levelConfig.damage);
         //---------------------------------------------------------------------
     }
-
+    void SetCurrentLevel()
+    {
+        curLevel = avlLevels[GameManager.levelID];
+        curLevel.levelObj.SetActive(true);
+    }
     public void SpawnCar()
     {
         //spawn the car selected in GameManager
-        carSpawnPoint = GameObject.Find("Spawn Point").transform;
-        GameObject player = Instantiate(cars[GameManager.carID], carSpawnPoint.position, Quaternion.identity);
-
-        //The car is made the child of the "spawn point" gameobject to change car rotation in each level
-        player.transform.SetParent(carSpawnPoint);
-        player.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
+        player = Instantiate(cars[GameManager.carID], curLevel.carSpawnPoint.position,
+            curLevel.carSpawnPoint.rotation);
     }
-
+    public void OnDamage()
+    {
+        curLevel.carHealth--;
+        UIController.instance.UpdateCarDamage(curLevel.carHealth);
+        if (curLevel.carHealth <= 0)
+        {
+            //LevelFailed
+            UIController.instance.OnGameEnd(false);
+        }
+    }
 
     public void LoadGarage()
     {
@@ -60,9 +71,13 @@ public class GameController : MonoBehaviour
 [System.Serializable]
 public class Levels
 {
+    public string levelName;
     public int carHealth;
     public int reward;
     public int secondsLeft = 30;
+    public float carParkTime;   //Time to hold car in parking area
+    public GameObject levelObj;
+    public Transform carSpawnPoint;
     public void SetDamage(int damage)
     {
         //if(damage > 0.5f)

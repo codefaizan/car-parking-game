@@ -17,9 +17,24 @@ public class UIController : MonoBehaviour
     TMP_Text timer;
     internal bool levelWon;
     bool levelFailed;
-
+    bool gameEnded;
+    bool isInParking;
+    float parkingTime;
+    int levelTime;
     GameController gameController;
     Levels levelConfig;
+    public static UIController instance;
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
+    }
     private void Start()
     {
         // finding GameObject references
@@ -48,13 +63,22 @@ public class UIController : MonoBehaviour
         timer.text = "00:" + levelConfig.secondsLeft;
         
     }
+    public void InitializUI(Levels _curLevel)
+    {
+        parkingTime = _curLevel.carParkTime;
+        levelTime = _curLevel.secondsLeft;
+    }
     // the health of car reduces when it has a collision
     public void GetDamage()
     {
         levelConfig.carHealth -= 1;
         healthCounter.text = " Car Health: " + levelConfig.carHealth;
     }
+    public void UpdateCarDamage(int _damageVal)
+    {
+        healthCounter.text = " Car Health: " + _damageVal;
 
+    }
     public void DisableLoadingPanel()
     {
         splashScreen.SetActive(false);
@@ -64,31 +88,30 @@ public class UIController : MonoBehaviour
 
     private void Update()
     {
-        // check if car is parked
-        if (parkLoadingSign.fillAmount >= 1f && !levelWon && !levelFailed)
-        {
-            levelWonPanel.SetActive(true);
-            levelWon = true;
-        }
-        //if (healthBar.fillAmount == 0f && !levelFailed)
-        //{
-        //    levelFailedPanel.SetActive(true);
-        //    levelFailed = true;
-        //}
+        if (gameEnded)
+            return;
 
-        // check if car is destroyed or time is ended
-        if ((levelConfig.carHealth <= 0 || levelConfig.secondsLeft <= 0) && !levelFailed && !levelWon)
+        if (isInParking)
         {
-            levelFailedPanel.SetActive(true);
-            levelFailed = true;
+            parkLoadingSign.fillAmount += (Time.deltaTime / parkingTime);
+            if (parkLoadingSign.fillAmount >= 1f)
+            {
+                OnGameEnd(true);
+            }
         }
+
     }
-
+    public void OnGameEnd(bool _completed)
+    {
+        gameEnded = true;
+        levelWonPanel.SetActive(_completed);
+        levelFailedPanel.SetActive(!_completed);
+    }
     public void StartParking()
     {
         parkLoadingSign.transform.parent.gameObject.SetActive(true);
         parkingSpot.color = Color.green;
-        parkLoadingSign.fillAmount += 0.7f * Time.deltaTime;
+        isInParking = true;
     }
 
     public void ExitParking()
@@ -96,6 +119,7 @@ public class UIController : MonoBehaviour
         parkingSpot.color = Color.white;
         parkLoadingSign.fillAmount = 0f;
         parkLoadingSign.transform.parent.gameObject.SetActive(false);
+        isInParking = false;
     }
 
     public void PauseGame()
@@ -112,10 +136,10 @@ public class UIController : MonoBehaviour
 
     IEnumerator Timer()
     {
-        while (levelConfig.secondsLeft > 0)
+        while (levelTime > 0 && !gameEnded)
         {
-            levelConfig.secondsLeft -= 1;
-            if (levelConfig.secondsLeft < 10)
+            levelTime -= 1;
+            if (levelTime < 10)
                 timer.text = "00:0" + levelConfig.secondsLeft;
             else
                 timer.text = "00:" + levelConfig.secondsLeft;
