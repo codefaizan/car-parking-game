@@ -19,7 +19,7 @@ public class GameController : MonoBehaviour
         levels[GameManager.levelID].SetActive(true);
         SetCurrentLevel();
         SpawnCar();
-        UIController.instance.InitializUI(curLevel);
+        UIController.instance.InitializeUI(curLevel);
     }
     void SetCurrentLevel()
     {
@@ -29,7 +29,7 @@ public class GameController : MonoBehaviour
     public void SpawnCar()
     {
         //spawn the car selected in GameManager
-        player = Instantiate(cars[GameManager.carID], curLevel.carSpawnPoint.position,
+        player = Instantiate(cars[GameManager.currentCar], curLevel.carSpawnPoint.position,
             curLevel.carSpawnPoint.rotation);
     }
     public void OnDamage()
@@ -41,11 +41,18 @@ public class GameController : MonoBehaviour
             //LevelFailed
             UIController.instance.OnGameEnd(false);
         }
+    }// it is executes when car has a collision
+
+    public void OnGameWin()
+    {
+        ScoreManager.instance.AddRewardToCurrency(curLevel.reward);
+        PlayerPrefs.SetInt("levelReached", int.Parse(curLevel.levelName));
     }
 
     public void LoadMainScene()
     {
         SceneManager.LoadScene(0);
+        Time.timeScale = 1;
     }
 
     public void ReloadScene()

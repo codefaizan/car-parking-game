@@ -1,17 +1,28 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
-    public static int carID;
+    public static int currentCar;
     public static int levelID;
-    static GameManager instance;
+    
+    public Button[] levelButtons;
+    public static GameManager instance;
     // UI Panels
     public GameObject splashScreen;
     public GameObject carsMenuPanel;
-    public GameObject mainMenuPanel;
     public GameObject levelsScreen;
+    public Animator animator;
+
+    // updated from CarSelectionManager
+    public TMP_Text carNameLabel;
+    public Button buyButton;
+    public Button selectCarButton;
+    public TMP_Text buyButtonText;
 
     void Awake()
     {
@@ -19,14 +30,22 @@ public class GameManager : MonoBehaviour
             Destroy(instance.gameObject);
         instance = this;
         DontDestroyOnLoad(this.gameObject);
+
+        
     }
 
     private void Start()
     {
-        //Invoke("DisableLoadingPanel", 2f);
-        carsMenuPanel.SetActive(false);
         levelsScreen.SetActive(false);
-        DisableLoadingPanel();
+        Invoke("DisableLoadingPanel", 2f);
+
+        // level locking
+        int levelReached = PlayerPrefs.GetInt("levelReached", 0);
+        for(int i=0; i<levelButtons.Length; i++)
+        {
+            if(i > levelReached)
+                levelButtons[i].interactable = false;
+        }
     }
 
     public void DisableLoadingPanel()
@@ -34,36 +53,19 @@ public class GameManager : MonoBehaviour
         splashScreen.SetActive(false);
     }
 
-    public void EnableCarsMenu()
-    {
-        mainMenuPanel.SetActive(false);
-        carsMenuPanel.SetActive(true);
-    }
-
-    public void EnableMainMenu()
-    {
-        mainMenuPanel.SetActive(true);
-        carsMenuPanel.SetActive(false);
-        levelsScreen.SetActive(false);
-    }
-
-    public void EnableLevelsMenu()
-    {
-        mainMenuPanel.SetActive(false);
-        levelsScreen.SetActive(true);
-    }
-
-    public void SelectCar(int carId)
-    {
-        carID = carId;
-    }// this method is assigned to the car buttons.the selected button takes the carID to GameController and spawns that car
 
     public void SelectLevel(int levelId)
     {
         levelID = levelId;
-        splashScreen.SetActive(true);
-        SceneManager.LoadScene(1);
-        splashScreen.SetActive(true);
+        StartCoroutine(LoadLevel());
     }// this method is assigned to the level buttons. the selected button takes the levelID to GameController and activate that level
 
+    IEnumerator LoadLevel()
+    {
+        animator.SetTrigger("Start");
+        yield return new WaitForSeconds(1f);
+        SceneManager.LoadScene(1);
+        animator.Rebind();
+        animator.Update(0f);
+    }
 }

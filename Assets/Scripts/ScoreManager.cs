@@ -1,18 +1,33 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class ScoreManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public TMP_Text currencyText;
+    public int currencyAmount;
+
+    public static ScoreManager instance;
+    void Awake()
     {
-        
+        if (instance != null)
+            Destroy(instance.gameObject);
+        instance = this;
+        //DontDestroyOnLoad(this.gameObject);
+
+        currencyAmount = PlayerPrefs.GetInt("Currency Amount");
+        currencyText.text = (int.Parse(currencyText.text) + currencyAmount).ToString();
+        //PlayerPrefs.DeleteAll();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void AddRewardToCurrency(int _reward)
     {
-        
+        currencyAmount += _reward;
+        PlayerPrefs.SetInt("Currency Amount", currencyAmount);
+    } // currency is updated from GameController
+
+    public void UpdateCurrency()
+    {
+        currencyText.text = (currencyAmount).ToString();
+        PlayerPrefs.SetInt("Currency Amount", currencyAmount);
     }
 }

@@ -52,19 +52,19 @@ public class UIController : MonoBehaviour
         healthCounter.text = "Car Health: " + carHealth;
         timerTextObj.text = "00:" + levelTime;
     }
-    public void InitializUI(Levels _curLevel)
+    public void InitializeUI(Levels _curLevel)
     {
         parkingTime = _curLevel.carParkTime;
         levelTime = _curLevel.secondsLeft;
         carHealth = _curLevel.carHealth;
         reward = _curLevel.reward;
     }
-    // the health of car reduces when it has a collision
+    
 
     public void UpdateCarDamage(int _damageVal)
     {
+        // the health of car reduces when it has a collision
         healthCounter.text = " Car Health: " + _damageVal;
-
     }
     public void DisableLoadingPanel()
     {
@@ -95,7 +95,10 @@ public class UIController : MonoBehaviour
         levelFailedPanel.SetActive(!_completed);
 
         if (_completed)
-            rewardTextObj.text = "Reward: $" + reward;
+        {
+            rewardTextObj.text = "Reward: " + reward + " gold";
+            GameController.instance.OnGameWin();
+        }
     }
     public void StartParking()
     {
@@ -140,8 +143,8 @@ public class UIController : MonoBehaviour
         }
     }
 
-    public void tempmethod()
+    public void LoadMainScene()
     {
-        print("ok");
+        SceneManager.LoadScene(0);
     }
 }
