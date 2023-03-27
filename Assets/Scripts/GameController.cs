@@ -34,12 +34,15 @@ public class GameController : MonoBehaviour
     }
     public void OnDamage()
     {
-        curLevel.carHealth--;
-        UIController.instance.UpdateCarDamage(curLevel.carHealth);
-        if (curLevel.carHealth <= 0)
+        if (!UIController.instance.gameEnded)
         {
-            //LevelFailed
-            UIController.instance.OnGameEnd(false);
+            curLevel.carHealth--;
+            UIController.instance.UpdateCarDamage(curLevel.carHealth);
+            if (curLevel.carHealth <= 0)
+            {
+                //LevelFailed
+                UIController.instance.OnGameEnd(false);
+            }
         }
     }// it is executes when car has a collision
 

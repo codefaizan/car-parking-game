@@ -15,7 +15,7 @@ public class UIController : MonoBehaviour
     public TMP_Text healthCounter;
     public TMP_Text timerTextObj;
     public TMP_Text rewardTextObj;
-    bool gameEnded;
+    internal bool gameEnded;
     bool isInParking;
     float parkingTime;
     int levelTime;
